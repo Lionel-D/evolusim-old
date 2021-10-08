@@ -1,0 +1,15 @@
+{% extends 'layouts/main.html.twig' %}
+
+{% block title %}Edit Simulation{% endblock %}
+
+{% block heading %}
+    <h1 class="display-6 mb-4">Edit Simulation</h1>
+{% endblock %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-body">
+            {{ include('simulation/_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

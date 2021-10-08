@@ -1,0 +1,42 @@
+{% extends 'layouts/main.html.twig' %}
+
+{% block title %}Simulation{% endblock %}
+
+{% block heading %}
+    <h1 class="display-6 mb-4">Simulation {{ simulation.name }}</h1>
+{% endblock %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>Id</th>
+                            <td>{{ simulation.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>GridWidth</th>
+                            <td>{{ simulation.gridWidth }}</td>
+                        </tr>
+                        <tr>
+                            <th>GridHeight</th>
+                            <td>{{ simulation.gridHeight }}</td>
+                        </tr>
+                        <tr>
+                            <th>Population</th>
+                            <td>{{ simulation.population }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <a href="{{ path('simulation_index') }}" class="btn btn-secondary me-2">Back to list</a>
+                <a href="{{ path('simulation_edit', {'id': simulation.id}) }}" class="btn btn-warning me-2">Edit</a>
+                {{ include('simulation/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

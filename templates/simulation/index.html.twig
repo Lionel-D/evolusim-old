@@ -1,0 +1,51 @@
+{% extends 'layouts/main.html.twig' %}
+
+{% block title %}Simulation index{% endblock %}
+
+{% block heading %}
+    <h1 class="display-6 mb-4">Simulation index</h1>
+{% endblock %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col" class="text-end">Grid width</th>
+                            <th scope="col" class="text-end">Grid height</th>
+                            <th scope="col" class="text-end">Population</th>
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for simulation in simulations %}
+                            <tr>
+                                <th scope="row">{{ simulation.id }}</th>
+                                <td>{{ simulation.name }}</td>
+                                <td class="text-end">{{ simulation.gridWidth }}</td>
+                                <td class="text-end">{{ simulation.gridHeight }}</td>
+                                <td class="text-end">{{ simulation.population }}</td>
+                                <td class="text-end">
+                                    <a href="{{ path('simulation_show', {'id': simulation.id}) }}" class="btn btn-sm btn-secondary">Show</a>
+                                    <a href="{{ path('simulation_edit', {'id': simulation.id}) }}" class="btn btn-sm btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No records found</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <a href="{{ path('simulation_new') }}" class="btn btn-primary">Create new</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
