@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ include('navigation/main.html.twig') }}
+    <div class="container pt-4">
+        {% block heading %}{% endblock %}
+        {{ include('globals/flash_messages.html.twig') }}
+        {% block main %}{% endblock %}
+    </div>
+    {% block modals %}{% endblock %}
+{% endblock %}
