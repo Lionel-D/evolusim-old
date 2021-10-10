@@ -3,11 +3,104 @@
 {% block title %}Home{% endblock %}
 
 {% block heading %}
-    <div class="text-center">
-        <h1 class="display-4">Welcome to Evolusim</h1>
-        <p class="lead">To begin playing god, start a simulation...</p>
-    </div>
+    <h1 class="display-4 text-center mb-5">Welcome to Evolusim</h1>
 {% endblock %}
 
 {% block main %}
+    <h3 class="display-6">Neural network :</h3>
+    <p class="text-muted">(Generated from genome : {{ hex_genome }})</p>
+    {% if neural_network.SENSOR|length > 0 %}
+        <hr>
+        <p class="lead text-success">SENSOR NEURONS :</p>
+        <div class="row">
+            {% for neuron_name, neuron_data in neural_network.SENSOR %}
+                <div class="col-lg-3 mb-3">
+                    <div class="card">
+                        <div class="card-header bg-success text-white text-center">{{ neuron_name }}</div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item small">
+                                CONNECTIONS : {{ neuron_data.CONNECTIONS }}
+                            </li>
+                            <li class="list-group-item small">
+                                OUTPUT TARGETS :
+                                <ul>
+                                    {% for output in neuron_data.OUTPUTS %}
+                                        <li class="small text-muted">{{ output.RECEIVER_ID }} (strength = {{ output.LINK_STRENGTH }})</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if neural_network.INTERNAL|length > 0 %}
+        <hr>
+        <p class="lead text-info">INTERNAL NEURONS :</p>
+        <div class="row">
+            {% for neuron_name, neuron_data in neural_network.INTERNAL %}
+                <div class="col-lg-3 mb-3">
+                    <div class="card">
+                        <div class="card-header bg-info text-white text-center">{{ neuron_name }}</div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item small">
+                                CONNECTIONS : {{ neuron_data.CONNECTIONS }}
+                            </li>
+                            <li class="list-group-item small">
+                                INPUT SOURCES :
+                                <ul>
+                                    {% if neuron_data.INPUTS is defined and neuron_data.INPUTS|length > 0 %}
+                                        {% for input in neuron_data.INPUTS %}
+                                            <li class="small text-muted">{{ input.EMITTER_ID }} (strength = {{ input.LINK_STRENGTH }})</li>
+                                        {% endfor %}
+                                    {% else %}
+                                        <li class="small text-muted">none</li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            <li class="list-group-item small">
+                                OUTPUT TARGETS :
+                                <ul>
+                                    {% if neuron_data.OUTPUTS is defined and neuron_data.OUTPUTS|length > 0 %}
+                                        {% for output in neuron_data.OUTPUTS %}
+                                            <li class="small text-muted">{{ output.RECEIVER_ID }} (strength = {{ output.LINK_STRENGTH }})</li>
+                                        {% endfor %}
+                                    {% else %}
+                                        <li class="small text-muted">none</li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if neural_network.TRIGGER|length > 0 %}
+        <hr>
+        <p class="lead text-danger">TRIGGER NEURONS :</p>
+        <div class="row">
+            {% for neuron_name, neuron_data in neural_network.TRIGGER %}
+                <div class="col-lg-3 mb-3">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white text-center">{{ neuron_name }}</div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item small">
+                                CONNECTIONS : {{ neuron_data.CONNECTIONS }}
+                            </li>
+                            <li class="list-group-item small">
+                                INPUT SOURCES :
+                                <ul>
+                                    {% for input in neuron_data.INPUTS %}
+                                        <li class="small text-muted">{{ input.EMITTER_ID }} (strength = {{ input.LINK_STRENGTH }})</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
