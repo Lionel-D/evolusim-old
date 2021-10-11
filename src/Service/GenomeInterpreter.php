@@ -51,7 +51,7 @@ class GenomeInterpreter
 
     private function updateNeuralLinking(&$neuralNetwork, $neuronType, $neuronId, $linkedNeuronId, $linkStrength, $signalType): array
     {
-        $linkedNeuronKeys = [
+        $linkedNeuronKey = [
             "INPUTS" => "EMITTER_ID",
             "OUTPUTS" => "RECEIVER_ID",
         ];
@@ -61,7 +61,7 @@ class GenomeInterpreter
                 "CONNECTIONS" => 1,
                 $signalType => [
                     [
-                        $linkedNeuronKeys[$signalType] => $linkedNeuronId,
+                        $linkedNeuronKey[$signalType] => $linkedNeuronId,
                         "LINK_STRENGTH" => $linkStrength,
                     ],
                 ],
@@ -70,7 +70,7 @@ class GenomeInterpreter
             $neuralNetwork[$neuronType][$neuronId]["CONNECTIONS"]++;
 
             $neuralNetwork[$neuronType][$neuronId][$signalType][] = [
-                $linkedNeuronKeys[$signalType] => $linkedNeuronId,
+                $linkedNeuronKey[$signalType] => $linkedNeuronId,
                 "LINK_STRENGTH" => $linkStrength,
             ];
         }
