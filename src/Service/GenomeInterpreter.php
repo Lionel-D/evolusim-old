@@ -18,7 +18,7 @@ class GenomeInterpreter
 
     public function buildNeuralNetwork(string $genome): array
     {
-        $neuralLinks = $this->decodeGenome($genome);
+        $genomeData = $this->decodeGenome($genome);
 
         $neuralNetwork = [
             "SENSOR" => [],
@@ -26,44 +26,53 @@ class GenomeInterpreter
             "TRIGGER" => [],
         ];
 
-        foreach ($neuralLinks as $neuralLink) {
-            if (!array_key_exists($neuralLink["EMITTER_ID"], $neuralNetwork[$neuralLink["EMITTER_TYPE"]])) {
-                $neuralNetwork[$neuralLink["EMITTER_TYPE"]][$neuralLink["EMITTER_ID"]] = [
-                    "CONNECTIONS" => 1,
-                    "OUTPUTS" => [
-                        [
-                            "RECEIVER_ID" => $neuralLink["RECEIVER_ID"],
-                            "LINK_STRENGTH" => $neuralLink["LINK_STRENGTH"],
-                        ],
+        foreach ($genomeData as $neuralLink) {
+            $this->updateNeuralLinking(
+                $neuralNetwork,
+                $neuralLink["EMITTER_TYPE"],
+                $neuralLink["EMITTER_ID"],
+                $neuralLink["RECEIVER_ID"],
+                $neuralLink["LINK_STRENGTH"],
+                "OUTPUTS"
+            );
+
+            $this->updateNeuralLinking(
+                $neuralNetwork,
+                $neuralLink["RECEIVER_TYPE"],
+                $neuralLink["RECEIVER_ID"],
+                $neuralLink["EMITTER_ID"],
+                $neuralLink["LINK_STRENGTH"],
+                "INPUTS"
+            );
+        }
+
+        return $neuralNetwork;
+    }
+
+    private function updateNeuralLinking(&$neuralNetwork, $neuronType, $neuronId, $linkedNeuronId, $linkStrength, $signalType): array
+    {
+        $linkedNeuronKeys = [
+            "INPUTS" => "EMITTER_ID",
+            "OUTPUTS" => "RECEIVER_ID",
+        ];
+
+        if (!array_key_exists($neuronId, $neuralNetwork[$neuronType])) {
+            $neuralNetwork[$neuronType][$neuronId] = [
+                "CONNECTIONS" => 1,
+                $signalType => [
+                    [
+                        $linkedNeuronKeys[$signalType] => $linkedNeuronId,
+                        "LINK_STRENGTH" => $linkStrength,
                     ],
-                ];
-            } else {
-                $neuralNetwork[$neuralLink["EMITTER_TYPE"]][$neuralLink["EMITTER_ID"]]["CONNECTIONS"]++;
+                ],
+            ];
+        } else {
+            $neuralNetwork[$neuronType][$neuronId]["CONNECTIONS"]++;
 
-                $neuralNetwork[$neuralLink["EMITTER_TYPE"]][$neuralLink["EMITTER_ID"]]["OUTPUTS"][] = [
-                    "RECEIVER_ID" => $neuralLink["RECEIVER_ID"],
-                    "LINK_STRENGTH" => $neuralLink["LINK_STRENGTH"],
-                ];
-            }
-
-            if (!array_key_exists($neuralLink["RECEIVER_ID"], $neuralNetwork[$neuralLink["RECEIVER_TYPE"]])) {
-                $neuralNetwork[$neuralLink["RECEIVER_TYPE"]][$neuralLink["RECEIVER_ID"]] = [
-                    "CONNECTIONS" => 1,
-                    "INPUTS" => [
-                        [
-                            "EMITTER_ID" => $neuralLink["EMITTER_ID"],
-                            "LINK_STRENGTH" => $neuralLink["LINK_STRENGTH"],
-                        ],
-                    ],
-                ];
-            } else {
-                $neuralNetwork[$neuralLink["RECEIVER_TYPE"]][$neuralLink["RECEIVER_ID"]]["CONNECTIONS"]++;
-
-                $neuralNetwork[$neuralLink["RECEIVER_TYPE"]][$neuralLink["RECEIVER_ID"]]["INPUTS"][] = [
-                    "EMITTER_ID" => $neuralLink["EMITTER_ID"],
-                    "LINK_STRENGTH" => $neuralLink["LINK_STRENGTH"],
-                ];
-            }
+            $neuralNetwork[$neuronType][$neuronId][$signalType][] = [
+                $linkedNeuronKeys[$signalType] => $linkedNeuronId,
+                "LINK_STRENGTH" => $linkStrength,
+            ];
         }
 
         return $neuralNetwork;
@@ -98,7 +107,9 @@ class GenomeInterpreter
 
         array_shift($splitGeneData);
 
-        return $this->convertBinaryData(array_combine(self::GENE_DATA_KEYS, $splitGeneData));
+        $binGeneData = array_combine(self::GENE_DATA_KEYS, $splitGeneData);
+
+        return $this->convertBinaryData($binGeneData);
     }
 
     private function convertBinaryData(array $geneData): array
