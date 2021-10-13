@@ -9,12 +9,53 @@ class GenomeInterpreter
     const GENE_DATA_KEYS = ["EMITTER_TYPE", "EMITTER_ID", "RECEIVER_TYPE", "RECEIVER_ID", "LINK_STRENGTH"];
     const EMITTER_TYPES = ["INTERNAL", "SENSOR"];
     const RECEIVER_TYPES = ["INTERNAL", "TRIGGER"];
+    const NEURONS_COLORS = ["SENSOR" => "#198754", "INTERNAL" => "#0dcaf0", "TRIGGER" => "#dc3545"];
     // TODO: The neurons pool should be generated based on the simulation parameters
     const NEURONS_POOL = [
         "SENSOR" => ["SENSOR 1", "SENSOR 2", "SENSOR 3", "SENSOR 4"],
         "INTERNAL" => ["INTERNAL 1", "INTERNAL 2"],
         "TRIGGER" => ["TRIGGER 1", "TRIGGER 2", "TRIGGER 3"],
     ];
+
+    public function getNeuralGraphData(array $neuralNetwork): array
+    {
+        $nodeData = [];
+        $linkData = [];
+
+        $neuronKeys = [];
+
+        foreach ($neuralNetwork as $neuronsType => $neuronsList) {
+            $neuronColor = self::NEURONS_COLORS[$neuronsType];
+
+            foreach ($neuronsList as $neuron => $neuronData) {
+                if (!in_array($neuron, $neuronKeys)) {
+                    $neuronKeys[] = $neuron;
+                }
+
+                $key = array_search($neuron, $neuronKeys);
+
+                $nodeData[] = ["key" => $key, "text" => $neuron, "color" => $neuronColor];
+
+                if (array_key_exists("INPUTS", $neuronData)) {
+                    foreach ($neuronData["INPUTS"] as $inputData) {
+                        if (!in_array($inputData["EMITTER_ID"], $neuronKeys)) {
+                            $neuronKeys[] = $inputData["EMITTER_ID"];
+                        }
+
+                        $fromKey = array_search($inputData["EMITTER_ID"], $neuronKeys);
+
+                        $linkData[] = [
+                            "from" => $fromKey,
+                            "to" => $key,
+                            "color" => $inputData["LINK_STRENGTH"] > 0 ? "#479f76" : "#e35d6a",
+                        ];
+                    }
+                }
+            }
+        }
+
+        return ["node_data" => $nodeData, "link_data" => $linkData];
+    }
 
     public function buildNeuralNetwork(string $genome): array
     {

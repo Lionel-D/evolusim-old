@@ -14,13 +14,15 @@ class HomeController extends AbstractController
      */
     public function index(GenomeInterpreter $genomeDecoder): Response
     {
-        $hexGenome = "21a068c2|9542f0c0|2e1052a9|30013a63";
+        $hexGenome = "2353fc85|1cf85f26|4b44e136|b2694511";
 
         $neuralNetwork = $genomeDecoder->buildNeuralNetwork($hexGenome);
+        $neuralGraphData = $genomeDecoder->getNeuralGraphData($neuralNetwork);
 
         return $this->render('home/index.html.twig', [
             'hex_genome' => $hexGenome,
             'neural_network' => $neuralNetwork,
+            'neural_graph_data' => $neuralGraphData,
         ]);
     }
 }

@@ -6,6 +6,7 @@
         "bootstrap": "^5.1.2",
         "core-js": "^3.0.0",
         "file-loader": "^6.0.0",
+        "gojs": "^2.1.51",
         "regenerator-runtime": "^0.13.2",
         "sass": "^1.42.1",
         "sass-loader": "^12.0.0",

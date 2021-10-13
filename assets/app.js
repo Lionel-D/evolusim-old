@@ -5,8 +5,10 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
-// any CSS you import will output into a single css file (app.css in this case)
+// Import Bootstrap css framework
 import './styles/app.scss';
 import 'bootstrap';
+// Import GoJS
+import 'gojs';
 // start the Stimulus application
 import './bootstrap';

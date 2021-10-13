@@ -2486,6 +2486,11 @@ globby@^6.1.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
+gojs@^2.1.51:
+  version "2.1.51"
+  resolved "https://registry.yarnpkg.com/gojs/-/gojs-2.1.51.tgz#f2fa1e25e0ecb82c9dadff5db3a42e8eef2e0f5c"
+  integrity sha512-9tp/bfOxrNfw6ZGSk2/62gIYDRKS3oLvCM3mIQ0pZKXfnrBYMH/MaVMeGKOEAGdXznTx6/Xe6iXgkluPqWZiIw==
+
 graceful-fs@^4.1.2, graceful-fs@^4.2.4, graceful-fs@^4.2.6:
   version "4.2.8"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.8.tgz#e412b8d33f5e006593cbd3cee6df9f2cebbe802a"
