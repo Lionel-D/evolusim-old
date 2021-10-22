@@ -34,8 +34,9 @@ export default class extends Controller {
 
         neuralGraph.linkTemplate = $(go.Link,
             {curve: go.Link.Bezier},
-            $(go.Shape, new go.Binding("stroke", "color")),
-            $(go.Shape, {strokeWidth: 0, toArrow: "Standard"}, new go.Binding("fill", "color")),
+            {toShortLength: 8},
+            $(go.Shape, new go.Binding("stroke", "color"), new go.Binding("strokeWidth", "width")),
+            $(go.Shape, {strokeWidth: 0, toArrow: "Standard", scale: 1.5}, new go.Binding("fill", "color")),
         );
 
         console.log(nodeDataArray);

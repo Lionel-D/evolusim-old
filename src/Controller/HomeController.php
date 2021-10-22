@@ -14,7 +14,8 @@ class HomeController extends AbstractController
      */
     public function index(GenomeInterpreter $genomeDecoder): Response
     {
-        $hexGenome = "2353fc85|1cf85f26|4b44e136|b2694511";
+        // 2353fc85|1cf85f26|4b44e136|b2694511
+        $hexGenome = "cb85ef3f|1ca5dacb|ca24f0b1|22ddc7be";
 
         $neuralNetwork = $genomeDecoder->buildNeuralNetwork($hexGenome);
         $neuralGraphData = $genomeDecoder->getNeuralGraphData($neuralNetwork);
