@@ -91,18 +91,18 @@ class GenomeInterpreter
         return $this->pruneNeuralNetwork($neuralNetwork);
     }
 
-    private function pruneNeuralNetwork($neuralNetwork)
+    private function pruneNeuralNetwork($neuralNetwork): array
     {
-        $triggeringNeurons= $this->getTriggeringNeuronsList($neuralNetwork);
+        $triggerChainsNeurons = $this->getTriggeringNeuronsList($neuralNetwork);
 
         foreach ($neuralNetwork as &$neuronList) {
-            $this->pruneNeuronsList($neuronList, $triggeringNeurons);
+            $this->pruneNeuronsList($neuronList, $triggerChainsNeurons);
         }
 
         return $neuralNetwork;
     }
 
-    private function getTriggeringNeuronsList($neuralNetwork)
+    private function getTriggeringNeuronsList($neuralNetwork): array
     {
         $triggeringNeurons= [];
 
@@ -122,9 +122,9 @@ class GenomeInterpreter
         // Next we iterate over INTERNAL neurons as it's here that there's likely useless paths
         // (meaning paths that doesn't end impacting TRIGGER neurons)
         foreach ($neuralNetwork["INTERNAL"] as $neuronId => $neuronData) {
-            // First we check if the INTERNAL neuron isn't in the effective list BUT has output links
+            // First we check if the INTERNAL neuron isn't in the triggering list BUT has output links
             if (!in_array($neuronId, $triggeringNeurons) && array_key_exists("OUTPUTS", $neuronData)) {
-                // If so, we check if any of the output links goes into a neuron of the effective list
+                // If so, we check if any of the output links goes into a neuron of the triggering list
                 foreach ($neuronData["OUTPUTS"] as $output) {
                     if (in_array($output["RECEIVER_ID"], $triggeringNeurons)) {
                         // If that's the case, we add the INTERNAL neuron to the effective list
@@ -134,7 +134,7 @@ class GenomeInterpreter
                 }
             }
 
-            // Then we check if the INTERNAL neuron is part of the effective list
+            // Then we check if the INTERNAL neuron is part of the triggering list
             // (either from the previous check or the TRIGGER loop before that)
             // AND if it has input links
             if (in_array($neuronId, $triggeringNeurons) && array_key_exists("INPUTS", $neuronData)) {
@@ -153,40 +153,50 @@ class GenomeInterpreter
     private function pruneNeuronsList(&$neuronList, $triggeringNeurons)
     {
         foreach ($neuronList as $neuronId => &$neuronData) {
+            // If this neuron isn't part of the triggering neurons, we remove it
             if (!in_array($neuronId, $triggeringNeurons)) {
                 unset($neuronList[$neuronId]);
             } else {
                 $inputConnections = 0;
                 $outputConnections = 0;
 
+                // If INPUTS are set, we check each of them to see if they're part of the triggering neurons
                 if (array_key_exists("INPUTS", $neuronData)) {
                     foreach ($neuronData["INPUTS"] as $key => $input) {
+                        // If any the INPUT isn't part of the triggering neurons, we remove the link
                         if (!in_array($input["EMITTER_ID"], $triggeringNeurons)) {
                             unset($neuronData["INPUTS"][$key]);
                         }
                     }
 
+                    // We recount INPUTS connections
                     $inputConnections = count($neuronData["INPUTS"]);
 
+                    // If there aren't any, we just remove the INPUTS key entirely
                     if ($inputConnections === 0) {
                         unset($neuronData["INPUTS"]);
                     }
                 }
 
+                // If OUTPUTS are set, we check each of them to see if they're part of the triggering neurons
                 if (array_key_exists("OUTPUTS", $neuronData)) {
                     foreach ($neuronData["OUTPUTS"] as $key => $output) {
+                        // If any the OUTPUT isn't part of the triggering neurons, we remove the link
                         if (!in_array($output["RECEIVER_ID"], $triggeringNeurons)) {
                             unset($neuronData["OUTPUTS"][$key]);
                         }
                     }
 
+                    // We recount OUTPUTS connections
                     $outputConnections = count($neuronData["OUTPUTS"]);
 
+                    // If there aren't any, we just remove the OUTPUTS key entirely
                     if ($outputConnections === 0) {
                         unset($neuronData["OUTPUTS"]);
                     }
                 }
 
+                // Last we update the CONNECTIONS value for the neuron
                 $neuronData["CONNECTIONS"] = $inputConnections + $outputConnections;
             }
         }
